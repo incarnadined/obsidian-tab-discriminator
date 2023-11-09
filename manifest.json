@@ -1,0 +1,10 @@
+{
+	"id": "obsidian-tab-discriminator",
+	"name": "Tab Title Specifier",
+	"version": "1.0.0",
+	"minAppVersion": "0.15.0",
+	"description": "This plugin changes the title of a tab to include the information about the file path of the file",
+	"author": "Sam Spencer",
+	"authorUrl": "https://samspencer.me",
+	"isDesktopOnly": true
+}
