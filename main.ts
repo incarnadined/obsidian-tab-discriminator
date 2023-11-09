@@ -3,14 +3,16 @@ import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Set
 // Remember to rename these classes and interfaces!
 
 interface MyPluginSettings {
-	mySetting: string;
+	prefix: string;
+	generations: string;
 }
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
-	mySetting: 'default'
+	prefix: 'Supervision',
+	generations: '2'
 }
 
-function updateTitles(settings: unknown) {
+function updateTitles(settings: MyPluginSettings) {
 	return () => {
 		app.workspace.iterateAllLeaves(leaf => {
 			let vs = leaf.getViewState()
@@ -26,11 +28,11 @@ function updateTitles(settings: unknown) {
 				filename = filename.split(".")[0];
 
 			if (!filename.startsWith(settings.prefix)) {
-				leaf.tabHeaderInnerTitleEl.setText(filename);
+				(leaf as any).tabHeaderInnerTitleEl.setText(filename);
 				return;
 			}
 
-			let discriminator = path[path.length - settings.generations - 1];
+			let discriminator = path[path.length - parseInt(settings.generations) - 1];
 			if (discriminator != undefined) {
 				if (discriminator.startsWith("Programming in C"))
 					discriminator = "C(++)";
@@ -44,7 +46,7 @@ function updateTitles(settings: unknown) {
 					discriminator = "Semantics";
 				
 			}
-			leaf.tabHeaderInnerTitleEl.setText(discriminator + "/" + filename);
+			(leaf as any).tabHeaderInnerTitleEl.setText(discriminator + "/" + filename);
 		});
 	};
 }
@@ -58,24 +60,6 @@ export default class MyPlugin extends Plugin {
 
 		this.registerEvent(
 			this.app.workspace.on('file-open', updateTitles(this.settings)) 
-			/*this.app.workspace.on('file-open', (file: TFile) => {
-				app.workspace.iterateAllLeaves(leaf => {
-					let vs = leaf.getViewState()
-
-					if (vs.state.file == null)
-						return;
-
-					let path = vs.state.file.split("/");
-					let filename = path[path.length - 1];
-
-					if (!filename.startsWith(this.settings.prefix))
-						return;
-
-					if (vs.type == "markdown")
-						filename = filename.split(".")[0];
-					leaf.tabHeaderInnerTitleEl.setText(path[path.length - this.settings.generations - 1] + "/" + filename);
-				})
-			})*/
 		);
 		
 		
